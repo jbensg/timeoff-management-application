@@ -13,6 +13,8 @@
 #
 # 4. Login to running container (to update config (vi config/app.json): 
 #   docker exec -ti --user root alpine_timeoff /bin/sh
+# ---
+# docker compose up -d --build
 # --------------------------------------------------------------------
 FROM node:12-alpine as dependencies
 
