@@ -1,0 +1,19 @@
+services:
+  timeoff:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - timeoff_data:/app/data
+    #depends_on:
+      # If your application depends on other services (e.g., a database), define them here.
+      # Example:
+      # - db
+    # If your application needs environment variables, define them here.
+    # environment:
+    #   - NODE_ENV=production
+
+
+volumes:
+  timeoff_data:
+  # db_data: # If you have a database service

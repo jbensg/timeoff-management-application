@@ -27,16 +27,32 @@ FROM node:12-alpine
 LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.docker.cmd="docker run -d -p 3000:3000 --name alpine_timeoff"
 
+
 RUN apk add --no-cache \
     nodejs npm \
     vim
 
-RUN adduser --system app --home /app
-USER app
+# Crear el usuario 'app' y el grupo 'app'.
+RUN addgroup -S app && adduser -S -G app app --home /app
+
+# Crear el directorio 'data' y asignar permisos COMO ROOT.
+RUN mkdir -p /app/data && chown app:app /app/data
+
 WORKDIR /app
+# Primero copiamos todos los archivos de la aplicación
 COPY . /app
 COPY --from=dependencies node_modules ./node_modules
 
+# ¡IMPORTANTE! Cambiar los permisos *DESPUÉS* de copiar los archivos.
+# Aseguramos que el usuario 'app' pueda escribir en 'public/css'.
+# Esto se hace *después* de que 'COPY . /app' haya traído los archivos,
+# para que 'chown' pueda aplicarse a los archivos recién copiados.
+RUN mkdir -p /app/public/css && chown -R app:app /app/public
+
+USER app
+
+# Ahora, el usuario 'app' debería tener permisos para escribir en /app/public/css/
+RUN npm run compile-sass
 
 CMD npm start
 
